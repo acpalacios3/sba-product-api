@@ -95,7 +95,7 @@ route.delete('/delete/:id', async (req, res) => {
             deleteProduct: deleteProduct
         });
 
-    } catch {
+    } catch(err) {
 
         console.error('Could not delete product', err);
         res.status(400).json({ error: 'Failed to delete product', details: err.message });
@@ -108,24 +108,34 @@ route.delete('/delete/:id', async (req, res) => {
 // category: Filter products by a specific category.
 // minPrice: Filter products with a price greater than or equal to this value.
 // maxPrice: Filter products with a price less than or equal to this value.
-// sortBy: Sort results. For example, price_asc for ascending price or price_desc for descending price.
+// sortBy: Sort results. price_asc for ascending price or price_desc for descending price.
 // page & limit: For pagination (defaulting to page 1, limit 10).
 // Dynamically build the Mongoose query based on which query parameters are provided.
 // Respond with an array of the resulting products.
 
 
 // Test:http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=600
+//  http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=1000&sortBy=price_desc
 route.get('/query', async (req, res) => {
     try {
-        
+
         // In Express.js, req.query is a property of the request object (req) that returns an object 
         // with the query parameters present in the HTTP request URL
-         const category = req.query.category || "";
-         const minPrice = req.query.minPrice || 1;
-         const maxPrice = req.query.maxPrice || 4000;
+        const category = req.query.category || "";
+        const minPrice = req.query.minPrice || 1;
+        const maxPrice = req.query.maxPrice || 4000;
 
-        const response = await Product.find({category:category ,price: {$gt:minPrice, $lt:maxPrice}
-        }).select({name:1, price:1})
+        //  sort -1 from highest to lowest
+        //  sort 1 from smallest to largest
+        const sortBy = req.query.sortBy == 'price_desc' ? -1 : 1;
+
+        //  $gte: greater than or equal and $lte: less than or equal
+        const response = await Product.find({
+            category: category,
+            price: { $gte: minPrice, $lte: maxPrice }
+        })
+            .sort({ price: sortBy })
+            .select({ name: 1, price: 1 });
 
         console.log('successfully retrieved products');
 
@@ -143,7 +153,7 @@ route.get('/query', async (req, res) => {
 // Retrieves a single product by its _id.
 // If the product is found, responds with the product object.
 // If no product is found, responds with a 404 status code.
-Test:   http://localhost:3000/api/products/6afe6367b666a0026f9ebf8b
+// Test:   http://localhost:3000/api/products/6afe6367b666a0026f9ebf8b
 
 route.get('/:id', async (req, res) => {
     try {
