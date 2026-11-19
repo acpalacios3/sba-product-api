@@ -27,33 +27,6 @@ route.post('/', async (req, res) => {
 });
 
 
-// GET /api/products/:id (Read a Single Product)
-// Retrieves a single product by its _id.
-// If the product is found, responds with the product object.
-// If no product is found, responds with a 404 status code.
-Test:   http://localhost:3000/api/products/6afe6367b666a0026f9ebf8b
-
-route.get('/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        console.log(req.params);
-
-        const singleProduct = await Product.findById(id);
-
-        if (!singleProduct) {
-            return res.status(404).json({
-                error: 'Product not found'
-            });
-
-        }
-        console.log('successfully retrieved a product');
-        res.status(200).json(singleProduct);
-
-    } catch (err) {
-        console.error('failed to retrieve Single product', err);
-        res.status(400).json({ error: 'cannot retrieve a product', details: err.message });
-    }
-})
 
 
 // PUT /api/products/:id (Update a Product)
@@ -128,6 +101,70 @@ route.delete('/delete/:id', async (req, res) => {
         res.status(400).json({ error: 'Failed to delete product', details: err.message });
     }
 
+})
+
+// GET /api/products (Read All Products with Advanced Querying)
+// This is the most complex endpoint. It should retrieve all products but also support the following optional query parameters:
+// category: Filter products by a specific category.
+// minPrice: Filter products with a price greater than or equal to this value.
+// maxPrice: Filter products with a price less than or equal to this value.
+// sortBy: Sort results. For example, price_asc for ascending price or price_desc for descending price.
+// page & limit: For pagination (defaulting to page 1, limit 10).
+// Dynamically build the Mongoose query based on which query parameters are provided.
+// Respond with an array of the resulting products.
+
+
+// Test:http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=600
+route.get('/query', async (req, res) => {
+    try {
+        
+        // In Express.js, req.query is a property of the request object (req) that returns an object 
+        // with the query parameters present in the HTTP request URL
+         const category = req.query.category || "";
+         const minPrice = req.query.minPrice || 1;
+         const maxPrice = req.query.maxPrice || 4000;
+
+        const response = await Product.find({category:category ,price: {$gt:minPrice, $lt:maxPrice}
+        }).select({name:1, price:1})
+
+        console.log('successfully retrieved products');
+
+        // res.json(response) =====> return JSON
+        // res.status(200).json(response) ====> Sets HTTP 200 and returns JSON.
+        res.status(200).json(response)
+
+    } catch (err) {
+        console.error('failed to retrieve products:', err);
+        res.status(400).json({ error: 'failed to fetch products', details: err.message });
+    }
+});
+
+// GET /api/products/:id (Read a Single Product)
+// Retrieves a single product by its _id.
+// If the product is found, responds with the product object.
+// If no product is found, responds with a 404 status code.
+Test:   http://localhost:3000/api/products/6afe6367b666a0026f9ebf8b
+
+route.get('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(req.params);
+
+        const singleProduct = await Product.findById(id);
+
+        if (!singleProduct) {
+            return res.status(404).json({
+                error: 'Product not found'
+            });
+
+        }
+        console.log('successfully retrieved a product');
+        res.status(200).json(singleProduct);
+
+    } catch (err) {
+        console.error('failed to retrieve Single product', err);
+        res.status(400).json({ error: 'cannot retrieve a product', details: err.message });
+    }
 })
 
 

@@ -1,0 +1,8 @@
+$kind: http-request
+url: http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=600
+method: GET
+queryParams:
+  category: Electronics
+  minPrice: "100"
+  maxPrice: "600"
+order: 6000
