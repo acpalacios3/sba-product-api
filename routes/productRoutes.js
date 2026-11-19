@@ -71,7 +71,7 @@ route.put('/:id', async (req, res) => {
         const id = req.params.id;
         const body = req.body;
 
-        // findByIdAndUpdate(): finds the book and updates it.
+        // findByIdAndUpdate(): finds the product and updates it.
         // returnDocument: 'after' : returns the document after updating it.
         const updateProduct = await Product.findByIdAndUpdate(id, body, { returnDocument: 'after' });
 
@@ -93,5 +93,43 @@ route.put('/:id', async (req, res) => {
     }
 
 });
+
+// DELETE /api/products/:id (Delete a Product)
+// Deletes a product by its _id.
+// If successful, responds with a success message.
+// If no product is found to delete, responds with a 404 status code.
+// Test:  http://localhost:3000/api/products/delete/6afe6367b666a0026f9ebf8b
+
+route.delete('/delete/:id', async (req, res) => {
+
+    try {
+        // req.params.id : gets the ID from the URL.
+        const id = req.params.id;
+
+        // findByIdAndDelete: look for and delete the product
+        const deleteProduct = await Product.findByIdAndDelete(id);
+
+        if (!deleteProduct) {
+
+            return res.status(404).json({
+                message: 'Product not found to delete'
+            });
+        }
+        console.log('Successfully deleted a product');
+        // Correctly finds a product by ID and deletes it. Returns a confirmation message.
+        res.status(200).json({
+            message: 'Product successfully deleted',
+            deleteProduct: deleteProduct
+        });
+
+    } catch {
+
+        console.error('Could not delete product', err);
+        res.status(400).json({ error: 'Failed to delete product', details: err.message });
+    }
+
+})
+
+
 
 export default route;
