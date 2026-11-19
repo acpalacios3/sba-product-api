@@ -46,6 +46,8 @@ route.put('/:id', async (req, res) => {
 
         // findByIdAndUpdate(): finds the product and updates it.
         // returnDocument: 'after' : returns the document after updating it.
+        // { returnDocument: 'after' } is similar to { new: true }. It returns the updated document.
+        
         const updateProduct = await Product.findByIdAndUpdate(id, body, { returnDocument: 'after' });
 
         // check if the product exists,provided that the ID has a valid format 
