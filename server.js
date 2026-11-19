@@ -11,13 +11,14 @@ const port = 3000;
 // Middleware to parse JSON
 app.use(e.json());
 
-// register book routes
-app.use('/api/products', route);
+// register product routes
+app.use('/api/products',route);
+
 
 // Handle 404 Not Found
 app.use((req, res) => {
     res.status(404).json({
-        error: 'Route not found'
+        error: 'Route not found**'
     });
 });
 
@@ -26,7 +27,7 @@ connectDB();
 
 //start server
 app.listen(port, () => {
-
+    
     console.log('Server running on port: ' + port);
 })
 

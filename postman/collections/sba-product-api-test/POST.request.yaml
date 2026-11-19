@@ -6,17 +6,17 @@ body:
   type: json
   content: "{\r
 
-    \    \"name\": \"Wireless Mouse\",\r
+    \    \"name\": \"Mouse\",\r
 
-    \    \"description\": \"Wireless mouse with ergonomic design\",\r
+    \    \"description\": \"Mouse with ergonomic design\",\r
 
-    \    \"price\": 30,\r
+    \    \"price\": 20,\r
 
     \    \"category\": \"Accessories\",\r
 
     \    \"inStock\": true,\r
 
-    \    \"tags\": [\"Mouse\", \"Wireless\", \"Logitech\"]\r
+    \    \"tags\": [\"Mouse\", \"Logitech\"]\r
 
     \  }"
 order: 2000
