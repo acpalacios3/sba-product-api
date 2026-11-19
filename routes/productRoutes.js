@@ -114,8 +114,13 @@ route.delete('/delete/:id', async (req, res) => {
 // Respond with an array of the resulting products.
 
 
-// Test:http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=600
+// Test:
+//  http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=600
+//  http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=1000&sortBy=price_asc
 //  http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=1000&sortBy=price_desc
+//  http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=1000&sortBy=price_asc&page=1&limit=10
+//  http://localhost:3000/api/products/query?category=Electronics&minPrice=100&maxPrice=1000&sortBy=price_asc&page=1&limit=5
+
 route.get('/query', async (req, res) => {
     try {
 
@@ -124,6 +129,8 @@ route.get('/query', async (req, res) => {
         const category = req.query.category || "";
         const minPrice = req.query.minPrice || 1;
         const maxPrice = req.query.maxPrice || 4000;
+        const page = req.query.page || 1;
+        const limit = req.query.limit || 10;
 
         //  sort -1 from highest to lowest
         //  sort 1 from smallest to largest
@@ -135,7 +142,16 @@ route.get('/query', async (req, res) => {
             price: { $gte: minPrice, $lte: maxPrice }
         })
             .sort({ price: sortBy })
-            .select({ name: 1, price: 1 });
+
+            // page:    The page number you want to retrieve.
+            // limit:   The number of products per page.
+            // .skip(): Indicates how many documents to skip.
+            .skip((page-1) *limit)
+
+            // .limit():Indicates how many documents to retrieve.
+            .limit(limit)
+
+            .select({ name: 1, category: 1 ,price: 1 });
 
         console.log('successfully retrieved products');
 
